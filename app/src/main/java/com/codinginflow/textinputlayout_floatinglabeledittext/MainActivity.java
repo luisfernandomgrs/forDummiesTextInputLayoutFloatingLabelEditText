@@ -3,14 +3,27 @@ package com.codinginflow.textinputlayout_floatinglabeledittext;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity {
 
+	private static final Pattern PASSWORD_PATTERN =
+			Pattern.compile("^" +
+					"(?=.*[0-9])" +				// at least 1 digit
+					"(?=.*[a-z])" +				// at least 1 lower case letter
+					"(?=.*[A-Z])" +				// at least 1 upper case lettr
+					//"(?=.*[a-zA-Z])" +			// any letter
+					"(?=.*[@#$%^&+=])" +		// at least 1 special character
+					"(?=\\S+$)" +				// no white spaces
+					".{6,}" +					//at least 6 characters
+					"$");
 	private TextInputLayout textInputEmail, textInputUsername, textInputPassword;
 	private Button buttonConfirmInput;
 
@@ -31,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 		String emailInput = textInputEmail.getEditText().getText().toString().trim();
 		if (emailInput.isEmpty()) {
 			textInputEmail.setError("field can't be empty");
+			return false;
+		} else if (!Patterns.EMAIL_ADDRESS.matcher(emailInput).matches()) {
+			textInputEmail.setError("Please enter a valid email address");
 			return false;
 		}
 
@@ -58,6 +74,9 @@ public class MainActivity extends AppCompatActivity {
 		String passwordInput = textInputPassword.getEditText().getText().toString().trim();
 		if (passwordInput.isEmpty()) {
 			textInputPassword.setError("field can't be empty");
+			return false;
+		} else if (!PASSWORD_PATTERN.matcher(passwordInput).matches()) {
+			textInputPassword.setError("Password too weak");
 			return false;
 		}
 
